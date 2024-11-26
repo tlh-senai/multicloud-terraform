@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: azure-pod
+  namespace: default
+spec:
+  serviceName: "webserver-service"
+  replicas: 2
+  selector:
+    matchLabels:
+      app: "webserver"
+  template:
+    metadata:
+      labels:
+        app: "webserver"
+    spec:
+      containers:
+      - name: webserver
+        image: tlhsenai/site-aprendejahttp:latest  # Inserir imagem docker do site
+        ports:
+        - containerPort: 80
+      - name: zabbix-agent
+        image: zabbix/zabbix-agent:latest
+        env:
+        - name: ZBX_SERVER_HOST
+          value: "192.168.1.249" # IP privado do servidor Zabbix
+        - name: ZBX_HOSTNAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name 
+        ports:
+        - containerPort: 10050
