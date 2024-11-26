@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: webserver
-        image: tlhsenai/site-aprendejahttp:latest  # Inserir imagem docker do site
+        image: tlhsenai/siteprojhttp:latest  # Inserir imagem docker do site
         ports:
         - containerPort: 80
       - name: zabbix-agent

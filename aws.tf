@@ -116,35 +116,32 @@ resource "aws_instance" "lin_zabbix" {
   #!/bin/bash
 
   sudo su -
-  # Instalar o zabbix
-  wget https://repo.zabbix.com/zabbix/6.4/ubuntu/pool/main/z/zabbix-release/zabbix-release_6.4-1+ubuntu22.04_all.deb
-  dpkg -i zabbix-release_6.4-1+ubuntu22.04_all.deb
+  # Configuração do repositório Zabbix 7.0
+  wget https://repo.zabbix.com/zabbix/7.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_7.0-2+ubuntu22.04_all.deb
+  dpkg -i zabbix-release_7.0-2+ubuntu22.04_all.deb
 
-  ## TESTAR DEPOIS - ZABBIX 7.2
-  #wget https://repo.zabbix.com/zabbix/7.2/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_7.2-0.1+ubuntu24.04_all.deb
-  #dpkg -i zabbix-release_7.2-0.1+ubuntu24.04_all.deb
-
-  # Atualizar o sources list e baixar as dependências necessárias
+  # Baixar dependências
   apt update -y
   apt install zabbix-server-mysql zabbix-frontend-php zabbix-apache-conf zabbix-sql-scripts zabbix-agent mysql-server -y
 
-  #Configuração do banco de dados
+  # Configure the database
   mysql -u root --password="" -e "create database zabbix character set utf8mb4 collate utf8mb4_bin;"
   mysql -u root --password="" -e "create user zabbix@localhost identified by 'Senai@134';"
   mysql -u root --password="" -e "grant all privileges on zabbix.* to zabbix@localhost;"
   mysql -u root --password="" -e "set global log_bin_trust_function_creators = 1;"
 
+  # Import initial schema and data
   zcat /usr/share/zabbix-sql-scripts/mysql/server.sql.gz | mysql --default-character-set=utf8mb4 -uzabbix --password="Senai@134" zabbix
 
   mysql -u root --password="" -e "set global log_bin_trust_function_creators = 0;"
 
-  # Substituir a senha no arquivo de configuração
-  sed -i '129s/# DBPassword=/DBPassword=Senai@134/' /etc/zabbix/zabbix_server.conf
+  # Update Zabbix server configuration with the database password
+  sed -i '131s/# DBPassword=/DBPassword=Senai@134/' /etc/zabbix/zabbix_server.conf
 
-  # Reiniciar os serviços
+  # Restart and enable services
   systemctl restart zabbix-server.service zabbix-agent.service apache2.service
   systemctl enable zabbix-server.service zabbix-agent.service apache2.service
-  
+
   # Adicionar DNS da AWS e da Google
   sed -i '1inameserver 8.8.8.8' /etc/resolv.conf && sed -i '1inameserver 169.254.169.253' /etc/resolv.conf
   systemctl restart systemd.resolved
