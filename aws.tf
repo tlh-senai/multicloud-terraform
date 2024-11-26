@@ -120,6 +120,10 @@ resource "aws_instance" "lin_zabbix" {
   wget https://repo.zabbix.com/zabbix/6.4/ubuntu/pool/main/z/zabbix-release/zabbix-release_6.4-1+ubuntu22.04_all.deb
   dpkg -i zabbix-release_6.4-1+ubuntu22.04_all.deb
 
+  ## TESTAR DEPOIS - ZABBIX 7.2
+  #wget https://repo.zabbix.com/zabbix/7.2/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_7.2-0.1+ubuntu24.04_all.deb
+  #dpkg -i zabbix-release_7.2-0.1+ubuntu24.04_all.deb
+
   # Atualizar o sources list e baixar as dependências necessárias
   apt update -y
   apt install zabbix-server-mysql zabbix-frontend-php zabbix-apache-conf zabbix-sql-scripts zabbix-agent mysql-server -y
