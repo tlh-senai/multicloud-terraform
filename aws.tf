@@ -153,16 +153,31 @@ resource "aws_instance" "lin_zabbix" {
 
   curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
   sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+  ## Instalação do Grafana
+  # Instalar pacotes necessários
+  apt-get install -y adduser libfontconfig1 musl
+
+  # Instalar o Grafana
+  wget https://dl.grafana.com/oss/release/grafana_10.4.1_amd64.deb
+  dpkg -i grafana_10.4.1_amd64.deb
+
+  # Instalar o plugin de instalação com o Zabbix
+  grafana-cli plugins install alexanderzobnin-zabbix-app
+
+  # Reiniciar serviço
+  systemctl restart grafana-server
+  systemctl enable grafana-server
 EOF
 
   tags = {
-    Name = "ZabbixServer-VPN"
+    Name = "SRV-Monitoramento"
   }
 }
 
 resource "aws_security_group" "zab_sg" {
-  name        = "Sec-Zabbix"
-  description = "Permitir SSH, HTTP, HTTPS, Zabbix, Zabbix Agent, K8S API e comunicar com Azure"
+  name        = "Sec-Monitor"
+  description = "Permitir SSH, HTTP, HTTPS, Zabbix, Zabbix Agent, K8S API, Grafana e comunicar com Azure"
   vpc_id      = aws_vpc.vpn_vpc.id
 
   #Libera SSH
@@ -211,6 +226,13 @@ resource "aws_security_group" "zab_sg" {
     description = "Kube API"
   }
   ingress {
+    from_port   = 3000
+    to_port     = 3000
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Grafana"
+  }
+  ingress {
     from_port   = 0
     to_port     = 0
     protocol    = -1
@@ -224,6 +246,7 @@ resource "aws_security_group" "zab_sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "Saida"
   }
   tags = {
     Name = "Sec-Zabbix"
@@ -238,4 +261,7 @@ output "ipprivzab" {
 }
 output "urlzabbix" {
   value = "http://${aws_instance.lin_zabbix.public_ip}/zabbix"
+}
+output "urlgrafana" {
+  value = "http://${aws_instance.lin_zabbix.public_ip}:3000"
 }
