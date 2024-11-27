@@ -254,66 +254,6 @@ resource "aws_security_group" "zab_sg" {
   }
 }
 
-module "eks" {
-  source  = "terraform-aws-modules/eks/aws"
-  version = "~> 20.0"
-
-  cluster_name    = "Cluster-EKS"
-  cluster_version = "1.31"
-
-  cluster_endpoint_public_access  = true
-
-  cluster_addons = {
-    coredns                = {}
-    eks-pod-identity-agent = {}
-    kube-proxy             = {}
-    vpc-cni                = {}
-  }
-
-  vpc_id                   = aws_vpc.vpn_vpc.id
-  subnet_ids               = [aws_subnet.vpn_subnet1.id, aws_subnet.vpn_subnet12.id]
-  cluster_additional_security_group_ids = [aws_security_group.zab_sg.id]
-
-  # EKS Managed Node Group(s)
-  eks_managed_node_group_defaults = {
-    instance_types = ["t3.medium"]
-  }
-
-  eks_managed_node_groups = {
-    example = {
-      # Starting on 1.30, AL2023 is the default AMI type for EKS managed node groups
-      ami_type       = "AL2023_x86_64_STANDARD"
-      instance_types = ["t3.medium"]
-
-      min_size     = 1
-      max_size     = 2
-      desired_size = 2
-    }
-  }
-
-  # Cluster access entry
-  # To add the current caller identity as an administrator
-  enable_cluster_creator_admin_permissions = true
-
-  access_entries = {
-    # One access entry with a policy associated
-    example = {
-      principal_arn     = "arn:aws:iam::283012201450:role/LabRole"
-
-      policy_associations = {
-        example = {
-          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"
-          access_scope = {
-            namespaces = ["default"]
-            type       = "namespace"
-          }
-        }
-      }
-    }
-  }
-}
-
-#SAIDAS
 output "ipzabbix" {
   value = aws_instance.lin_zabbix.public_ip
 }
