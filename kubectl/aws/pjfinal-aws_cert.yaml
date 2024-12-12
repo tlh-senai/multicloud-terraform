@@ -1,0 +1,14 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: kubecert
+  namespace: default
+spec:
+  secretName: default
+  issuerRef:
+    name: kubeissuer
+    kind: ClusterIssuer
+  commonName: www.mesa1.ctiturbo.com.br
+  dnsNames:
+  - aws.mesa1.ctiturbo.com.br
+  - www.mesa1.ctiturbo.com.br

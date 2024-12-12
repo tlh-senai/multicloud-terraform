@@ -19,6 +19,9 @@ spec:
         image: tlhsenai/siteprojhttp:latest  # Inserir imagem docker do site
         ports:
         - containerPort: 80
+        env:
+        - name: PORT
+          value: "80"
       - name: zabbix-agent
         image: zabbix/zabbix-agent:latest
         env:

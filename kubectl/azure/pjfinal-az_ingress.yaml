@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: kubeissuer
+    kubernetes.io/ingress.class: nginx
+  name: "webserver-ingress"
+  namespace: default
+spec:
+  rules:
+  - host: az.mesa1.ctiturbo.com.br
+    http:
+      paths:
+      - backend:
+          service:
+            name: "webserver-service"
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - az.mesa1.ctiturbo.com.br
+    secretName: default
