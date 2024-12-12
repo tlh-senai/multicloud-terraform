@@ -73,11 +73,6 @@ resource "azurerm_route_table" "Rota_AWS" {
   }
 }
 
-/*resource "azurerm_subnet_route_table_association" "Associacao_tabela" {
-  subnet_id      = azurerm_subnet.public1.id
-  route_table_id = azurerm_route_table.Rota_AWS.id
-}*/
-
 resource "azurerm_local_network_gateway" "GTW-LOCAL01" {
   name                = "GTW-LOCAL01"
   location            = azurerm_resource_group.grupo.location
