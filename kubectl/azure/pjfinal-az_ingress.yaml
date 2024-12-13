@@ -8,6 +8,16 @@ metadata:
   namespace: default
 spec:
   rules:
+  - host: www.mesa1.ctiturbo.com.br
+    http:
+      paths:
+      - backend:
+          service:
+            name: "webserver-service"
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
   - host: az.mesa1.ctiturbo.com.br
     http:
       paths:
@@ -21,4 +31,5 @@ spec:
   tls:
   - hosts:
     - az.mesa1.ctiturbo.com.br
+    - www.mesa1.ctiturbo.com.br
     secretName: default

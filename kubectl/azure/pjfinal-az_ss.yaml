@@ -26,7 +26,7 @@ spec:
         image: zabbix/zabbix-agent:latest
         env:
         - name: ZBX_SERVER_HOST
-          value: "192.168.1.58" # IP privado do servidor Zabbix
+          value: "192.168.1.230" # IP privado do servidor Zabbix
         - name: ZBX_HOSTNAME
           valueFrom:
             fieldRef:

@@ -8,6 +8,7 @@ spec:
   issuerRef:
     name: kubeissuer
     kind: ClusterIssuer
-  commonName: az.mesa1.ctiturbo.com.br
+  commonName: www.mesa1.ctiturbo.com.br
   dnsNames:
   - az.mesa1.ctiturbo.com.br
+  - www.mesa1.ctiturbo.com.br
