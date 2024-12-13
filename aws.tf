@@ -235,33 +235,25 @@ resource "aws_security_group" "zab_sg" {
     cidr_blocks = ["193.186.4.239/32"]
     description = "HTTP"
   }
-  #Libera HTTPS
-  /*ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-    description = "HTTPS"
-  }*/
   ingress {
     from_port   = 10050
     to_port     = 10050
     protocol    = "tcp"
-    cidr_blocks = ["172.16.1.0/24","172.16.2.0/24"]
+    cidr_blocks = ["172.16.0.0/22","192.168.0.0/21"]
     description = "Zabbix"
   }
   ingress {
     from_port   = 10051
     to_port     = 10051
     protocol    = "tcp"
-    cidr_blocks = ["172.16.1.0/24","172.16.2.0/24"]
+    cidr_blocks = ["172.16.0.0/22","192.168.0.0/21"]
     description = "Zabbix Proxy"
   }
   ingress {
     from_port   = 6443
     to_port     = 6443
     protocol    = "tcp"
-    cidr_blocks = ["172.16.1.0/24","172.16.2.0/24"]
+    cidr_blocks = ["172.16.0.0/22","192.168.0.0/21"]
     description = "Kube API"
   }
   ingress {
@@ -275,15 +267,22 @@ resource "aws_security_group" "zab_sg" {
     from_port   = 0
     to_port     = 0
     protocol    = -1
-    cidr_blocks = ["172.16.1.0/24","172.16.2.0/24"]
+    cidr_blocks = ["172.16.0.0/22"]
     description = "VPN Azure"
   }
   ingress {
     from_port   = 0
     to_port     = 0
     protocol    = -1
-    security_groups = [ aws_security_group.eks_sg ]
+    security_groups = [ aws_security_group.eks_sg.id ]
     description = "Interno EKS"
+  }
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = -1
+    cidr_blocks = ["192.168.0.0/21"]
+    description = "Interno Nodes"
   }
 
   #Libera tráfego de saída
