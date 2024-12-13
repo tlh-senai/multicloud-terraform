@@ -19,7 +19,12 @@ resource "azurerm_subnet" "public1" {
   resource_group_name  = azurerm_resource_group.grupo.name
   virtual_network_name = azurerm_virtual_network.VNET-VPN.name
   address_prefixes     = ["172.16.1.0/24"]
-
+}
+resource "azurerm_subnet" "public2" {
+  name                 = "SubredePub1-AZVPN"
+  resource_group_name  = azurerm_resource_group.grupo.name
+  virtual_network_name = azurerm_virtual_network.VNET-VPN.name
+  address_prefixes     = ["172.16.2.0/24"]
 }
 
 #SUBNET DO GATEWAY
@@ -62,13 +67,8 @@ resource "azurerm_route_table" "Rota_AWS" {
   resource_group_name = azurerm_resource_group.grupo.name
 
   route {
-    name           = "Rota1"
-    address_prefix = "192.168.1.0/24"
-    next_hop_type  = "VirtualNetworkGateway"
-  }
-  route {
-    name           = "Rota2"
-    address_prefix = "192.168.2.0/24"
+    name           = "RotaAWS"
+    address_prefix = "192.168.0.0/21"
     next_hop_type  = "VirtualNetworkGateway"
   }
 }
@@ -81,7 +81,9 @@ resource "azurerm_local_network_gateway" "GTW-LOCAL01" {
   gateway_address = aws_vpn_connection.vpn_connection.tunnel1_address
   address_space = [
     aws_subnet.vpn_subnet1.cidr_block,
-    aws_subnet.vpn_subnet2.cidr_block
+    aws_subnet.vpn_subnet2.cidr_block,
+    aws_subnet.vpn_subnet3.cidr_block,
+    aws_subnet.vpn_subnet4.cidr_block
   ]
 }
 
@@ -93,7 +95,9 @@ resource "azurerm_local_network_gateway" "GTW-LOCAL02" {
   gateway_address = aws_vpn_connection.vpn_connection.tunnel2_address
   address_space = [
     aws_subnet.vpn_subnet1.cidr_block,
-    aws_subnet.vpn_subnet2.cidr_block
+    aws_subnet.vpn_subnet2.cidr_block,
+    aws_subnet.vpn_subnet3.cidr_block,
+    aws_subnet.vpn_subnet4.cidr_block
   ]
 }
 

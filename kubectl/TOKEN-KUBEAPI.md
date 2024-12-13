@@ -9,3 +9,6 @@ kubectl apply -f pjfinal-secret.yaml
 3.
 kubectl get secret zabbix-monitor-token
 kubectl describe secret zabbix-monitor-token
+
+Para o GitHub Actions
+kubectl get secret zabbix-monitor-token -o yaml
